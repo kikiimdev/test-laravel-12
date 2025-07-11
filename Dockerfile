@@ -1,7 +1,7 @@
 # Use the official FrankenPHP image as the base
 FROM dunglas/frankenphp:latest
 
-ENV SERVER_NAME=http://
+ENV SERVER_NAME=c4sswsc4088oc80wgs88c8sg.36.66.184.240.sslip.io
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -46,4 +46,4 @@ EXPOSE 80 443 443/udp
 # --max-requests=1 is useful for development to see immediate code changes
 # For production, you might want to increase this or remove it,
 # and use --workers to control the number of PHP worker processes.
-CMD ["php", "artisan", "octane:frankenphp"]
+CMD ["php", "artisan", "octane:frankenphp", "--host=c4sswsc4088oc80wgs88c8sg.36.66.184.240.sslip.io", "--port=80"]
