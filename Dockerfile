@@ -46,4 +46,4 @@ EXPOSE 80 443 443/udp
 # --max-requests=1 is useful for development to see immediate code changes
 # For production, you might want to increase this or remove it,
 # and use --workers to control the number of PHP worker processes.
-CMD ["php", "artisan", "octane:frankenphp", "--host=${SERVER_NAME}", "--port=80"]
+CMD ["php", "artisan", "octane:frankenphp", "--host=test-laravel-12.banjarmasinkota.go.id", "--port=80"]
