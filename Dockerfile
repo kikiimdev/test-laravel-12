@@ -9,11 +9,6 @@ RUN apt-get update \
     libpq-dev \
     supervisor
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Set working directory
-WORKDIR /app
-
 # Install PHP extensions required by Laravel
 # You may need to add more extensions based on your application's needs
 RUN install-php-extensions \
@@ -24,6 +19,12 @@ RUN install-php-extensions \
     # Add any other extensions like gd, zip, etc., if your app needs them
     # For example: gd zip
     && rm -rf /var/lib/apt/lists/*
+
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /app
 
 # Copy composer.json and composer.lock first to leverage Docker cache
 COPY composer.json composer.lock ./
