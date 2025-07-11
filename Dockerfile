@@ -26,14 +26,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy composer.json and composer.lock first to leverage Docker cache
-COPY composer.json composer.lock ./
+# Copy the rest of the application code
+COPY . .
 
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader
-
-# Copy the rest of the application code
-COPY . .
 
 # Set appropriate permissions for Laravel storage and bootstrap/cache directories
 RUN chown -R www-data:www-data storage bootstrap/cache \
