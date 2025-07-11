@@ -32,8 +32,8 @@ services:
       - .:/app # Mount the current directory into the container for development (optional for production, consider multi-stage build)
       - caddy_data:/data # Volume for Caddy's certificates and data
       - caddy_config:/config # Volume for Caddy's configuration
-    networks:
-      - app-network
+    # networks:
+    #   - app-network
 
   # db:
   #     image: mysql:8.0 # Or postgres, mariadb, etc.
@@ -57,10 +57,9 @@ services:
   #         - app-network
 
 volumes:
-  db_data:
+  # db_data:
   caddy_data:
   caddy_config:
-
-networks:
-  app-network:
-    driver: bridge
+# networks:
+#   app-network:
+#     driver: bridge

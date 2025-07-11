@@ -1,6 +1,8 @@
 # Use the official FrankenPHP image as the base
 FROM dunglas/frankenphp:latest
 
+ENV SERVER_NAME=c4sswsc4088oc80wgs88c8sg.36.66.184.240.sslip.io
+
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     git \
