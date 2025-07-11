@@ -39,7 +39,7 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rwx storage bootstrap/cache
 
 # Expose ports (FrankenPHP listens on 80 for HTTP and 443 for HTTPS)
-# EXPOSE 80 443 443/udp
+EXPOSE 80 443 443/udp
 
 # Command to run FrankenPHP with Laravel Octane in worker mode
 # --host=0.0.0.0 makes it accessible from other containers/outside the container
