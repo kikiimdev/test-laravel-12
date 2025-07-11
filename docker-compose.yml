@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: laravel_app
+        restart: always
+        environment:
+            APP_ENV: production
+            APP_DEBUG: ${APP_DEBUG:-false}
+            APP_KEY: ${APP_KEY}
+            APP_URL: ${APP_URL:-http://localhost}
+            DB_CONNECTION: mysql
+            DB_HOST: db
+            DB_PORT: 3306
+            DB_DATABASE: ${DB_DATABASE}
+            DB_USERNAME: ${DB_USERNAME}
+            DB_PASSWORD: ${DB_PASSWORD}
+            REDIS_HOST: redis
+            BROADCAST_DRIVER: pusher # Or your preferred driver
+            CACHE_DRIVER: redis
+            QUEUE_CONNECTION: redis
+            SESSION_DRIVER: redis
+            # Add other environment variables as needed
+        ports:
+            - "80:80" # Map host port 80 to container port 80 (FrankenPHP HTTP)
+            - "443:443" # Map host port 443 to container port 443 (FrankenPHP HTTPS)
+            - "443:443/udp" # Map host port 443/udp for HTTP/3 (QUIC)
+        volumes:
+            - .:/app # Mount the current directory into the container for development (optional for production, consider multi-stage build)
+            - caddy_data:/data # Volume for Caddy's certificates and data
+            - caddy_config:/config # Volume for Caddy's configuration
+        networks:
+            - app-network
+
+    db:
+        image: mysql:8.0 # Or postgres, mariadb, etc.
+        container_name: laravel_db
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - db_data:/var/lib/mysql
+        networks:
+            - app-network
+
+    redis:
+        image: redis:alpine
+        container_name: laravel_redis
+        restart: always
+        networks:
+            - app-network
+
+volumes:
+    db_data:
+    caddy_data:
+    caddy_config:
+
+networks:
+    app-network:
+        driver: bridge
