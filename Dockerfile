@@ -1,6 +1,8 @@
 # Use the official FrankenPHP image as the base
 FROM dunglas/frankenphp:latest
 
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 # Set working directory
 WORKDIR /app
 
