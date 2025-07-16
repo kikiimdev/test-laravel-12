@@ -1,5 +1,9 @@
 FROM dunglas/frankenphp
 
+# Set Caddy server name to "http://" to serve on 80 and not 443
+# Read more: https://frankenphp.dev/docs/config/#environment-variables
+ENV SERVER_NAME="http://"
+
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     git \
@@ -46,5 +50,7 @@ RUN chown -R www-data:www-data /app \
     && find /app/storage -type d -exec chmod 775 {} \; \
     && find /app/bootstrap/cache -type f -exec chmod 664 {} \; \
     && find /app/bootstrap/cache -type d -exec chmod 775 {} \;
+
+EXPOSE 80 443
 
 ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
