@@ -16,7 +16,7 @@ FROM oven/bun:latest AS production
 WORKDIR /app
 
 # Only `/app/public/build` folder is needed from the build stage
-COPY --from=build /app/public/build /app/public/
+COPY --from=build /app/public/build /app/public
 
 FROM dunglas/frankenphp
 
