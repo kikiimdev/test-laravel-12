@@ -1,28 +1,37 @@
 FROM dunglas/frankenphp
 
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git \
+    unzip \
+    librabbitmq-dev \
+    libpq-dev \
+    supervisor
+
 RUN install-php-extensions \
-    pcntl \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
     gd \
-    zip \
-    intl \
-    opcache
-    # Add other PHP extensions here...
-
-COPY . /app
-
-# Copy Composer dari official image
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+    pcntl \
+    opcache \
+    pdo \
+    pdo_mysql \
+    redis
 
 # Set working directory
 WORKDIR /app
 
-# Install dependencies PHP menggunakan Composer
+# Copy Composer dari official image
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+COPY . .
+
+# Install PHP extensions
+RUN pecl install xdebug
+
+# Install Laravel dependencies using Composer.
 RUN composer install --optimize-autoloader
+
+# Enable PHP extensions
+RUN docker-php-ext-enable xdebug
 
 # Buat direktori yang dibutuhkan Laravel
 RUN mkdir -p /app/storage/logs \
