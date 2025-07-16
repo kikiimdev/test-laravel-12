@@ -1,16 +1,28 @@
+FROM oven/bun:latest AS build
+WORKDIR /app
+
+COPY package.json bun.lock ./
+
+# use ignore-scripts to avoid builting node modules like better-sqlite3
+RUN bun install --frozen-lockfile --ignore-scripts
+
+# Copy the entire project
+COPY . .
+
+RUN bun --bun run build
+
+# copy production dependencies and source code into final image
+FROM oven/bun:1 AS production
+WORKDIR /app
+
+# Only `/app/public/build` folder is needed from the build stage
+COPY --from=build /app/public/build /app/public/
+
 FROM dunglas/frankenphp
 
 # Set Caddy server name to "http://" to serve on 80 and not 443
 # Read more: https://frankenphp.dev/docs/config/#environment-variables
 ENV SERVER_NAME="http://"
-
-# RUN apt-get update \
-#     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-#     git \
-#     unzip \
-#     librabbitmq-dev \
-#     libpq-dev \
-#     supervisor
 
 RUN apt update && apt install -y \
     curl unzip git libicu-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libssl-dev
