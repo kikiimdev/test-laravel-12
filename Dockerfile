@@ -12,7 +12,7 @@ COPY . .
 RUN bun --bun run build
 
 # copy production dependencies and source code into final image
-FROM oven/bun:1 AS production
+FROM oven/bun:latest AS production
 WORKDIR /app
 
 # Only `/app/public/build` folder is needed from the build stage
