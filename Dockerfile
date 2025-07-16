@@ -1,6 +1,7 @@
 FROM oven/bun:latest AS build
 WORKDIR /app
 
+# Change bun.lock with package_lock.json/yarn.lock/pnpm-lock.yaml/bun.lockb
 COPY package.json bun.lock ./
 
 # use ignore-scripts to avoid builting node modules like better-sqlite3
@@ -30,7 +31,8 @@ RUN install-php-extensions \
     zip \
     exif \
     ftp \
-    bcmath
+    bcmath \
+    redis
 
 # Set php.ini
 RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/custom.ini \
@@ -56,7 +58,7 @@ COPY . .
 COPY --from=build /app/public/build /app/public
 
 # Install PHP extensions
-RUN pecl install redis
+# RUN pecl install redis
 
 # Install Laravel dependencies using Composer.
 RUN composer install --prefer-dist --optimize-autoloader --no-interaction
@@ -67,4 +69,4 @@ RUN docker-php-ext-enable redis
 # EXPOSE 80 443
 EXPOSE 8000
 
-ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--workers=2", "--max-requests=500"]
