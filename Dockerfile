@@ -1,5 +1,19 @@
 FROM dunglas/frankenphp
 
+RUN apk add --no-cache \
+    git \
+    curl \
+    # libpng-dev \
+    # libxml2-dev \
+    # zip \
+    unzip
+    # oniguruma-dev \
+    # libzip-dev \
+    # freetype-dev \
+    # libjpeg-turbo-dev \
+    # libwebp-dev \
+    # icu-dev
+
 RUN install-php-extensions \
     pcntl
     # Add other PHP extensions here...
