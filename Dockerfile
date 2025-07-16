@@ -11,13 +11,6 @@ COPY . .
 
 RUN bun --bun run build
 
-# copy production dependencies and source code into final image
-FROM oven/bun:latest AS production
-WORKDIR /app
-
-# Only `/app/public/build` folder is needed from the build stage
-COPY --from=build /app/public/build /app/public
-
 FROM dunglas/frankenphp
 
 # Set Caddy server name to "http://" to serve on 80 and not 443
@@ -58,6 +51,9 @@ RUN mkdir -p /app/storage /app/bootstrap/cache
 RUN chown -R www-data:www-data /app/storage bootstrap/cache && chmod -R 775 /app/storage
 
 COPY . .
+
+# Only `/app/public/build` folder is needed from the build stage
+COPY --from=build /app/public/build /app/public
 
 # Install PHP extensions
 RUN pecl install redis
