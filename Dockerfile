@@ -69,4 +69,4 @@ RUN docker-php-ext-enable redis
 # EXPOSE 80 443
 EXPOSE 8000
 
-ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--workers=3", "--max-requests=500"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--workers=3", "--max-requests=500", "--log-level=debug"]
