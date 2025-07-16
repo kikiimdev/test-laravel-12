@@ -4,13 +4,16 @@ FROM dunglas/frankenphp
 # Read more: https://frankenphp.dev/docs/config/#environment-variables
 ENV SERVER_NAME="http://"
 
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    git \
-    unzip \
-    librabbitmq-dev \
-    libpq-dev \
-    supervisor
+# RUN apt-get update \
+#     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+#     git \
+#     unzip \
+#     librabbitmq-dev \
+#     libpq-dev \
+#     supervisor
+
+RUN apt update && apt install -y \
+    curl unzip git libicu-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libssl-dev
 
 RUN install-php-extensions \
     gd \
@@ -18,38 +21,40 @@ RUN install-php-extensions \
     opcache \
     pdo \
     pdo_mysql \
-    redis
+    intl \
+    zip \
+    exif \
+    ftp \
+    bcmath
 
-# Set working directory
-WORKDIR /app
+# Set php.ini
+RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/custom.ini \
+    && echo "opcache.jit=tracing" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "opcache.jit_buffer_size=256M" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "memory_limit=512M" > /usr/local/etc/php/conf.d/custom.ini \
+    && echo "upload_max_filesize=6M" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "post_max_size=6M" >> /usr/local/etc/php/conf.d/custom.ini
 
 # Copy Composer dari official image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Set working directory
+WORKDIR /app
+
+RUN mkdir -p /app/storage /app/bootstrap/cache
+
+RUN chown -R www-data:www-data /app/storage bootstrap/cache && chmod -R 775 /app/storage
+
 COPY . .
 
 # Install PHP extensions
-RUN pecl install xdebug
+RUN pecl install redis
 
 # Install Laravel dependencies using Composer.
-RUN composer install --optimize-autoloader
+RUN composer install --prefer-dist --optimize-autoloader --no-interaction
 
 # Enable PHP extensions
-RUN docker-php-ext-enable xdebug
-
-# Buat direktori yang dibutuhkan Laravel
-RUN mkdir -p /app/storage/logs \
-    && mkdir -p /app/storage/framework/cache \
-    && mkdir -p /app/storage/framework/sessions \
-    && mkdir -p /app/storage/framework/views \
-    && mkdir -p /app/bootstrap/cache
-
-# Set proper ownership dan permissions
-RUN chown -R www-data:www-data /app \
-    && find /app/storage -type f -exec chmod 664 {} \; \
-    && find /app/storage -type d -exec chmod 775 {} \; \
-    && find /app/bootstrap/cache -type f -exec chmod 664 {} \; \
-    && find /app/bootstrap/cache -type d -exec chmod 775 {} \;
+RUN docker-php-ext-enable redis
 
 # EXPOSE 80 443
 EXPOSE 8000
