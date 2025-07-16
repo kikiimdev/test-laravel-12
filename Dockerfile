@@ -51,6 +51,7 @@ RUN chown -R www-data:www-data /app \
     && find /app/bootstrap/cache -type f -exec chmod 664 {} \; \
     && find /app/bootstrap/cache -type d -exec chmod 775 {} \;
 
-EXPOSE 80 443
+# EXPOSE 80 443
+EXPOSE 8000
 
 ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
