@@ -16,7 +16,8 @@ FROM dunglas/frankenphp
 
 # Set Caddy server name to "http://" to serve on 80 and not 443
 # Read more: https://frankenphp.dev/docs/config/#environment-variables
-ENV SERVER_NAME="http://"
+# ENV SERVER_NAME="http://"
+ENV SERVER_NAME="https://test-laravel-12.banjarmasinkota.go.id"
 
 RUN apt update && apt install -y \
     curl unzip git libicu-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libssl-dev
@@ -66,7 +67,7 @@ RUN composer install --prefer-dist --optimize-autoloader --no-interaction
 # Enable PHP extensions
 RUN docker-php-ext-enable redis
 
-# EXPOSE 80 443
-EXPOSE 8000
+EXPOSE 80 443
+# EXPOSE 8000
 
-ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--workers=3", "--max-requests=500", "--log-level=debug"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--workers=3", "--max-requests=500", "--log-level=debug", "--host=0.0.0.0", "--port=80" ]
